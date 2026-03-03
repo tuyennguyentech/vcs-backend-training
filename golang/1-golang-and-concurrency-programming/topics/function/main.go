@@ -27,6 +27,7 @@ func modulo(dividend int, divisor int) (quotient int, remainder int) {
 
 func innerFunc(phantom int) (err error) {
 	if phantom == 0 {
+		// trong go, pattern để xử lý lỗi, ngoại lệ là trả về 1 instance implement [error] interface
 		err = errors.New("phantom cannot be zero")
 	}
 	return
@@ -35,6 +36,7 @@ func innerFunc(phantom int) (err error) {
 func outerFunc(phantom int) (err error) {
 	err = innerFunc(phantom)
 	if err != nil {
+		// có thể bọc các lỗi cấp thấp vào lỗi cấp cao hơn
 		err = fmt.Errorf("outerFunc error: %w", err)
 	}
 	return
@@ -49,7 +51,8 @@ func main() {
 	// có thể truyền vào slice theo cú pháp func(slice...)
 	_ = sum([]int{1, 2, 3}...)
 	_, _ = modulo(10, 4)
-	inner := errors.New("inner error")
-	outer := fmt.Errorf("Outer error: %w", inner)
-	fmt.Println(outer)
+	// kiểm tra lỗi tồn tại hay không, nếu có thì xử lý lỗi
+	if err := outerFunc(0); err != nil {
+		fmt.Println(err)
+	}
 }
